@@ -1,0 +1,37 @@
+'x' si lettre bien placée
+'o' si lettre mal placée
+'-' si la lettre n'est pas dans le mot
+
+Liste des fonctions à écrires : 
+Main
+choixMot            ---> in progress but ca me casse les couilles ca marche pas
+initMot
+affichage
+verifMot (fait appel aux deux fonctions suivantes)
+longueur mot
+position (fait appel à positionLettres)
+
+
+étape 1 : le programme doit choisir un mot au hazard dans le dictionnaire
+
+étape 2 : afficher la première lettre du mot en question 
+
+ETIQ : étape 3 : scanf de la réponse du joueur
+
+étape 4 : vérification longueur du mot 
+
+étape 5 : vérification position lettre, vérification présence lettre
+
+Rq: dans un premier temps fct° présence vérifie la présence même multiple ensuite présence 
+vérifiera le nb d'occurences
+
+étape 6 : affichage réponse utilisateur
+
+étape 7 : affichage correspondance
+
+ETIQ : 5 :
+
+Sol 1 : mot trouvé félicitation 
+
+Sol 2 : perdu 
+
