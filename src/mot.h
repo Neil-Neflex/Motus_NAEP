@@ -6,13 +6,16 @@ typedef struct {
     char mot[];     //mot est une liste de caractère qui contient le mot
 }Mot;
 
-
+//crée un nouvel élément de type Mot
 extern Mot initMot(); 
 // Rôle : compare longueure du mot entré en param avec la valeur attendue
-extern int longueurMot(const char[],const int);
+extern int longueurMot(Mot,const int);
 // Rôle : renvoie vrai si pile est vide faux sinon
-extern int presence(const char[],const char);
+extern int presence(Mot,const char);
 // Rôle : renvoie 1 si l'élément à la position entrée en param est bien la même pour
-// les deux mots 
-extern int position (int, const char[], const char[]); 
-// Rôle : empile en sommet de la pile un nouvel élément
+// le mot et l'entrée du joueur
+extern int position (int, Mot, const char[]);
+// Rôle : vérifie le mot entrée par le joueur par rapport au mot à trouver
+extern char * verifMot(Mot, const char[]);
+//
+extern int positionLettres();

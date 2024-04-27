@@ -2,7 +2,7 @@
  * Ce fichier s'occupe de la gestion des fichier et de la gestion relative au dictionnaire
  * Il n'intervient qu'au début de l'éxécution du programme
  *
- * @authors N. Amrane & E. Patijunas      
+ * @authors N. Amrane & E. Patijunas     neil.amrane@etu.univ-cotedazur.fr 
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,35 +18,33 @@ const char PATH[] =  "../ressources/DicoMotus"; //chemin vers le dictionnaire
 
 //Cette procédure a pour but l'ouverture et la gestion du dictionnaire
 int Gestion(void){
-    char cLu;
-    dico = fopen(PATH, "r"); //on ouvre dico.txt en lecture seule
+    int cLu;
+    dico = fopen("../ressources/DicoMotus", "r"); //on ouvre dico.txt en lecture seule
     //On test si le dictionnaire s'est bien ouvert
     if (dico == NULL){
         printf("Ouverture du dictionnaire impossilbe\n");
         return 0; //on retourne 0 s'il y a une erreur
     }
-    else{
-        printf("Initialisation du fichier achevée");
-        return 1;
-    }
+    
+    printf("Initialisation du fichier achevée\n");
     //On parcours le dictionnaire pour compter le nombre de mots
     do{
         cLu = fgetc(dico);          //cLu parcours tous les caractères du fichier
         if (cLu == '\n') NBMOTS++;  //il y a un mot par ligne, on compte donc les "\n"
     }while(cLu != EOF);         //on boucle tant que l'on ne rencontre pas l'EOF du fichier
+    return 1;
 }
 
 //cette fonction retourne une valeur pseudo-aléatoire entre à et le paramètre nbMax
 int aleatoire(int nbMax){
     srand(time(NULL));      //initialisation du générateur pseudo-aléatioire 
                             //sur l'horloge de l'ordinateur
-    printf("%d",NBMOTS);
     return (rand() % nbMax);     //retour d'une valeur comprise entre 0 et nbMax
 }
 
 //Cette procédure à pour but le choix du mot dans le ditctionnaire 
 int choixMot(char *adress){
-    char cLu;
+    int cLu;
     int numMot; //numMot contiendra la ligne du mot choisi aléatoirement
     //Si le dictionnaire n'a pas encore été chargé, choixMot fait un appel à Gestion
     if (dico == NULL){

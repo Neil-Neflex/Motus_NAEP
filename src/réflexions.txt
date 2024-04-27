@@ -2,14 +2,30 @@
 'o' si lettre mal placée
 '-' si la lettre n'est pas dans le mot
 
+!!!!!!!!!!!! Faire fichier Tableau.c et Tableau.h pour gérer les listes d'une fonction à 
+l'autre. Sinon mettre des pointeurs
+
 Liste des fonctions à écrires : 
-Main
-choixMot            ---> in progress but ca me casse les couilles ca marche pas
-initMot
+Motus ----------------------------------
+
+Main        (fait appel à Partie)
+Partie      (fait appel à verifMot, affichage, finPartie)
+affichage 
+FinPartie 
+Mot ------------------------------------
+choixMot            ---> Done
+initMot             ---> Done
 affichage
 verifMot (fait appel aux deux fonctions suivantes)
-longueur mot
+longueurMot         --->Done
 position (fait appel à positionLettres)
+
+positionLettres 
+
+Dico -------------------------------
+ChoixMot        --->Done
+Gestion         --->Done
+Aléatoire       --->Done
 
 
 étape 1 : le programme doit choisir un mot au hazard dans le dictionnaire
