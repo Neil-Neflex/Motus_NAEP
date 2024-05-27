@@ -1,6 +1,6 @@
 /**
- * Ce fichier s'occupe de la gestion des fichier et de la gestion relative au dictionnaire
- * Il n'intervient qu'au début de l'éxécution du programme
+ * Ce fichier s'occupe de la gestion des fichiers et de la gestion relative au dictionnaire
+ * Il n'intervient qu'au début de l'exécution du programme
  *
  * @authors N. Amrane & E. Patijunas     neil.amrane@etu.univ-cotedazur.fr 
  */
@@ -57,7 +57,7 @@ int choixMot(char *adress){
 
     rewind(dico);               //retour au début du dictionnaire
 
-    //on parcours une nouvelle fois le dictionnaire pour s'arrêter à la ligne choisie
+    //on parcourt une nouvelle fois le dictionnaire pour s'arrêter à la ligne choisie
     while(numMot>0){
         cLu = fgetc(dico);
         if (cLu == '\n') numMot--;
