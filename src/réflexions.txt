@@ -51,3 +51,13 @@ Sol 1 : mot trouvé félicitation
 
 Sol 2 : perdu 
 
+---------------------------------------------
+partie interface graphique :
+
+
+Il faut maintenant 
+-gérer l'appel des bonnes fonctions au bon moment, 
+- programmer les fonctions callback initialisées 
+-tester l'affichages des fonctions au bon endroit 
+- programmer la fonction "GenereBoxDisp" initialisées qui appel les fonctions box_orangeDef box_bleuDef box_rougeDef à partir du résultat de la 
+vérification que la fonction prend en paramètre
