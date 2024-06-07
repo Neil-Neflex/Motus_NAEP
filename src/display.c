@@ -9,7 +9,9 @@
  *
  * @authors N. Amrane & E. Patijunas     neil.amrane@etu.univ-cotedazur.fr
  */
-
+#include <libsx.h>
+#include <stdio.h>
+#include "callback.h"
 
 void init_display(int argc, char *argv[])
 {
