@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -I/usr/include/libsx
-LDFLAGS = -L/usr/lib/libsx -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE -lm -lSX
+CFLAGS = -Wall -I$(HOME)/C/PROJET_MOTUS/libsx/include
+LDFLAGS = -L$(HOME)/C/PROJET_MOTUS/libsx/lib -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE -lm -lSX
 
 # Fichiers sources et objets
 SRC = data.c vue.c callback.c
