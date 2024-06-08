@@ -1,0 +1,1 @@
+gcc -o motus motus.o main.o dico.o mot.o vue.o callback.o -lm -L/usr/X11R6/lib -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE
