@@ -1,89 +1,108 @@
-#include <libsx.h>
 #include <stdio.h>
-#include <stdbool.h>
-#include "callback.h"
+#include <stdlib.h>
+#include <libsx.h>
 #include "data.h"
 
-extern Widget zone_text; // Déclaration de la zone de texte externe
+#define MAX_ROWS 6
+#define MAX_COLS 8
+#define WORD_LEN 8
 
-// Variables globales
-Mot motMystere;
-int essais;
-const int MAX_ESSAIS = 6;
-char etat[51]; // Assuming the maximum word size is 50 + 1 for '\0'
+Widget tiles[MAX_ROWS][MAX_COLS];
+Widget input_text;
+char motMystere[WORD_LEN];
+char etat[WORD_LEN];
+int essais = 0;
 
-// Rôle : est appelée quand le joueur appuie sur le bouton tester
-void test_callback(Widget w, void *data)
+void create_interface(void);
+void quit_callback(Widget w, void *data);
+void check_word_callback(Widget w, void *data);
+
+int main(int argc, char *argv[])
 {
-    char motPropose[51]; // Assuming the maximum word size is 50 + 1 for '\0'
-    static bool initialised = false;
-    bool valid_input = true;
-
-    // Initialiser le jeu si ce n'est pas déjà fait
-    if (!initialised) {
-        motMystere = initMot();
-        essais = 0;
-        etat[motMystere.size] = '\0';
-        initialised = true;
-        printf("Nouveau mot à deviner : %s\n", motMystere.mot); // Debugging purpose
+    if (OpenDisplay(argc, argv) == 0) {
+        fprintf(stderr, "Can't open display\n");
+        return EXIT_FAILURE;
     }
 
-    // Récupérer le texte saisi par l'utilisateur
-    GetText(zone_text, motPropose, sizeof(motPropose) - 1);
-    motPropose[sizeof(motPropose) - 1] = '\0'; // Assurer la terminaison de la chaîne
+    // Initialisation du mot mystère
+    Mot mot = initMot();
+    strncpy(motMystere, mot.mot, WORD_LEN);
+    free(mot.mot);
 
-    // Vérifier la validité du mot proposé
-    if (!longueurMot(motPropose, motMystere.mot)) {
-        printf("Le mot proposé n'est pas de la bonne longueur.\n");
-        valid_input = false;
-    }
+    // Crée les widgets et l'interface
+    create_interface();
 
-    if (valid_input && !motExistant(motPropose)) {
-        printf("Le mot proposé n'est pas dans le dictionnaire.\n");
-        valid_input = false;
-    }
+    // Passe le contrôle à la bibliothèque libsx
+    MainLoop();
 
-    if (valid_input) {
-        if (verifMot(motPropose, motMystere.mot, etat)) {
-            printf("Félicitations ! Vous avez trouvé le mot : %s\n", motMystere.mot);
-            initialised = false; // Reset for a new game
-        } else {
-            affichageMot(motPropose, etat);
-            GenereBoxDisp(etat, 0, 0); // Exemple de positionnement (à adapter)
-            essais++;
-            if (essais >= MAX_ESSAIS) {
-                printf("Malheureusement, vous n'avez pas trouvé le mot. Le mot était %s.\n", motMystere.mot);
-                initialised = false; // Reset for a new game
-            }
+    return EXIT_SUCCESS;
+}
+
+void create_interface(void)
+{
+    SetBgColor("white");
+
+    Widget quit_button = MakeButton("Quit", quit_callback, NULL);
+    Widget check_button = MakeButton("Check", check_word_callback, NULL);
+    input_text = MakeStringEntry(NULL, 20, NULL, NULL);
+
+    Widget button_box = MakeHorizBox(NULL);
+    Widget grid_box = MakeVertBox(NULL);
+
+    SetWidgetPos(button_box, PLACE_UNDER, grid_box, NULL);
+    SetWidgetPos(quit_button, PLACE_RIGHT, check_button, NULL);
+    SetWidgetPos(input_text, PLACE_UNDER, button_box, NULL);
+
+    for (int i = 0; i < MAX_ROWS; i++) {
+        Widget row_box = MakeHorizBox(grid_box);
+        for (int j = 0; j < WORD_LEN; j++) {
+            tiles[i][j] = MakeButton(" ", NULL, NULL);
+            SetBgColor(tiles[i][j], "blue");
+            SetWidgetPos(tiles[i][j], PLACE_RIGHT, NULL, NULL);
         }
     }
 
-    // Réinitialiser la zone de texte pour la prochaine entrée
-    SetText(zone_text, "");
+    ShowDisplay();
 }
 
-// Rôle : est appelée quand le joueur appuie sur le bouton recommencer
-void restart_callback(Widget w, void *data)
+void quit_callback(Widget w, void *data)
 {
-    printf("Partie recommencée!\n");
-
-    // Réinitialiser le jeu
-    motMystere = initMot();
-    essais = 0;
-    etat[motMystere.size] = '\0';
-
-    // Effacer le texte de la zone de texte
-    SetText(zone_text, "");
-
-    // Réinitialiser l'affichage (si nécessaire)
-    printf("Nouveau mot à deviner : %s\n", motMystere.mot); // Debugging purpose
+    exit(0);
 }
 
-// Rôle : est appelée quand le joueur appuie sur le bouton arrêter
-void stop_callback(Widget w, void *data)
+void check_word_callback(Widget w, void *data)
 {
-    printf("Partie arrêtée!\n");
+    char motPropose[WORD_LEN];
+    GetStringEntry(input_text, motPropose, sizeof(motPropose));
 
-    // Fermer l'application (ou retourner à un menu principal, selon votre design)
-    exit(0); // Ou une autre action selon votre logique
+    if (!motExistant(motPropose)) {
+        printf("Le mot proposé n'est pas dans le dictionnaire. Essayez à nouveau.\n");
+        return;
+    }
+
+    if (strlen(motPropose) != strlen(motMystere)) {
+        printf("Le mot proposé n'est pas de la bonne longueur. Essayez à nouveau.\n");
+        return;
+    }
+
+    int gagne = verifMot(motPropose, motMystere, etat);
+    for (int i = 0; i < WORD_LEN; i++) {
+        if (etat[i] == 'x') {
+            SetBgColor(tiles[essais][i], "orange");
+        } else if (etat[i] == 'o') {
+            SetBgColor(tiles[essais][i], "blue");
+        } else {
+            SetBgColor(tiles[essais][i], "red");
+        }
+        SetLabel(tiles[essais][i], motPropose + i);
+    }
+    essais++;
+
+    if (gagne) {
+        printf("Félicitations ! Vous avez trouvé le mot %s.\n", motMystere);
+        exit(0);
+    } else if (essais >= MAX_ROWS) {
+        printf("Malheureusement, vous n'avez pas trouvé le mot. Le mot était %s.\n", motMystere);
+        exit(0);
+    }
 }
