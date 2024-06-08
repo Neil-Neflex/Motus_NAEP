@@ -24,51 +24,45 @@ void init_display(int argc, char *argv[])
     SetWidgetPos(zone_text, PLACE_ABOVE, NULL, NO_CARE, NULL); // Positionnement de la zone de texte
 }
 
-// Rôle : crée une box orange avec la lettre à l'intérieur
-void box_orangeDef(char p[], char l) {
-    Widget orange, label;
-    orange = MakeColorBox(GetRGBColor(255, 165, 0), 100, 100); // Orange box
-    label = MakeLabel(&l); // Insertion de la lettre dans la case
-
-    // Positionnement des éléments créés
+// Rôle : crée une boîte orange avec la lettre à l'intérieur
+void box_orangeDef(char l) {
+    Widget orange;
+    orange = MakeDrawArea(100, 100, NULL); // Boîte orange
     SetWidgetPos(orange, PLACE_UNDER, NULL, NO_CARE, NULL);
-    SetWidgetPos(label, PLACE_UNDER, orange, NO_CARE, NULL);
+    DrawFilledBox(orange, GetFgColor(), GetRGBColor(255, 165, 0), 100, 100); // Boîte orange
+    DrawText(orange, &l, 1, 50, 50); // Insertion de la lettre dans la case
 }
 
-// Rôle : crée une box bleue avec la lettre à l'intérieur
-void box_bleuDef(char p[], char l) {
-    Widget bleu, label;
-    bleu = MakeColorBox(GetRGBColor(0, 0, 255), 100, 100); // Blue box
-    label = MakeLabel(&l); // Insertion de la lettre dans la case
-
-    // Positionnement des éléments créés
+// Rôle : crée une boîte bleue avec la lettre à l'intérieur
+void box_bleuDef(char l) {
+    Widget bleu;
+    bleu = MakeDrawArea(100, 100, NULL); // Boîte bleue
     SetWidgetPos(bleu, PLACE_UNDER, NULL, NO_CARE, NULL);
-    SetWidgetPos(label, PLACE_UNDER, bleu, NO_CARE, NULL);
+    DrawFilledBox(bleu, GetFgColor(), GetRGBColor(0, 0, 255), 100, 100); // Boîte bleue
+    DrawText(bleu, &l, 1, 50, 50); // Insertion de la lettre dans la case
 }
 
-// Rôle : crée une box rouge avec la lettre à l'intérieur
-void box_rougeDef(char p[], char l) {
-    Widget rouge, label;
-    rouge = MakeColorBox(GetRGBColor(255, 0, 0), 100, 100); // Red box
-    label = MakeLabel(&l); // Insertion de la lettre dans la case
-
-    // Positionnement des éléments créés
+// Rôle : crée une boîte rouge avec la lettre à l'intérieur
+void box_rougeDef(char l) {
+    Widget rouge;
+    rouge = MakeDrawArea(100, 100, NULL); // Boîte rouge
     SetWidgetPos(rouge, PLACE_UNDER, NULL, NO_CARE, NULL);
-    SetWidgetPos(label, PLACE_UNDER, rouge, NO_CARE, NULL);
+    DrawFilledBox(rouge, GetFgColor(), GetRGBColor(255, 0, 0), 100, 100); // Boîte rouge
+    DrawText(rouge, &l, 1, 50, 50); // Insertion de la lettre dans la case
 }
 
-// Rôle : génère les boxes en fonction du résultat du test du mot que l'utilisateur a entré
+// Rôle : génère les boîtes en fonction du résultat du test du mot que l'utilisateur a entré
 void GenereBoxDisp(char result[], int pos_x, int pos_y) {
     for (int i = 0; i < strlen(result); i++) {
         switch (result[i]) {
             case 'O': // Lettre bien placée
-                box_orangeDef(NULL, result[i]);
+                box_orangeDef(result[i]);
                 break;
             case 'B': // Lettre présente mais mal placée
-                box_bleuDef(NULL, result[i]);
+                box_bleuDef(result[i]);
                 break;
             case 'R': // Lettre absente
-                box_rougeDef(NULL, result[i]);
+                box_rougeDef(result[i]);
                 break;
         }
     }
