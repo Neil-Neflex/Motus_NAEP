@@ -3,14 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
-
-
-
-
-typedef struct {
-    int size;
-    char *mot;
-}Mot;
+#include "data.h"
 
 FILE* dico = NULL; //Ce pointeur de fichier contiendra notre dictionnaire
 int NBMOTS = 0;
