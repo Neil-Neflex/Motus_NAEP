@@ -1,29 +1,106 @@
-#include <libsx.h>
-#include "callback.h"
+#include "data.h"
 
-void create_display(int argc, char *argv[]) {
+// Global variables for UI components
+Widget inputField, submitButton, resetButton;
+Widget wordGrid[MAX_ATTEMPTS][MAX_WORD_LENGTH];
+Mot motMystere;
+int essais;
+char etat[MAX_WORD_LENGTH + 1];
+bool conditionAffichage;
+
+void InitDisplay(int argc, char **argv);
+void CreateDisplay();
+void SubmitCallback(Widget w, void *data);
+void ResetCallback(Widget w, void *data);
+
+int main(int argc, char **argv) {
     if (OpenDisplay(argc, argv) == 0) {
         fprintf(stderr, "Can't open display\n");
-        return;
+        return EXIT_FAILURE;
     }
 
-    Widget quit_btn = MakeButton("Quit", quit_cb, NULL);
-    Widget help_btn = MakeButton("Help", help_cb, NULL);
-    Widget reset_btn = MakeButton("Reset", reset_cb, NULL);
-    
-    Widget input_field = MakeStringEntry(NULL, 100, NULL, NULL);
-    Widget submit_btn = MakeButton("Submit", submit_cb, (void*)input_field);
+    InitDisplay(argc, argv);
+    MainLoop();
 
-    SetWidgetPos(help_btn, PLACE_RIGHT, quit_btn, NO_CARE, NULL);
-    SetWidgetPos(reset_btn, PLACE_RIGHT, help_btn, NO_CARE, NULL);
-    SetWidgetPos(input_field, PLACE_UNDER, quit_btn, NO_CARE, NULL);
-    SetWidgetPos(submit_btn, PLACE_RIGHT, input_field, NO_CARE, NULL);
-    
-    ShowDisplay();
+    return EXIT_SUCCESS;
 }
 
-int main(int argc, char *argv[]) {
-    create_display(argc, argv);
-    MainLoop();
-    return 0;
+void InitDisplay(int argc, char **argv) {
+    motMystere = initMot();
+    essais = 0;
+    etat[motMystere.size] = '\0';
+    conditionAffichage = false;
+
+    printf("Mot à deviner : %s\n", motMystere.mot); // For debugging purposes
+
+    CreateDisplay();
+}
+
+void CreateDisplay() {
+    SetBgColor(GetWidgetRoot(), WHITE);
+    
+    // Create input field
+    inputField = MakeStringEntry(NULL, MAX_WORD_LENGTH, NULL, NULL);
+
+    // Create buttons
+    submitButton = MakeButton("Submit", SubmitCallback, NULL);
+    resetButton = MakeButton("Reset", ResetCallback, NULL);
+
+    // Create grid for displaying the words
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+        for (int j = 0; j < MAX_WORD_LENGTH; j++) {
+            wordGrid[i][j] = MakeLabel("");
+            SetBgColor(wordGrid[i][j], BLUE);
+        }
+    }
+
+    // Layout the components
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+        for (int j = 0; j < motMystere.size; j++) {
+            AttachWidget(wordGrid[i][j], i, j);
+        }
+    }
+    AttachWidget(inputField, MAX_ATTEMPTS, 0);
+    AttachWidget(submitButton, MAX_ATTEMPTS + 1, 0);
+    AttachWidget(resetButton, MAX_ATTEMPTS + 1, 1);
+}
+
+void SubmitCallback(Widget w, void *data) {
+    char motPropose[MAX_WORD_LENGTH + 1];
+    GetStringEntry(inputField, motPropose);
+
+    if (motExistant(motPropose) && longueurMot(motPropose, motMystere.mot)) {
+        int gagne = verifMot(motPropose, motMystere.mot, etat);
+        for (int i = 0; i < motMystere.size; i++) {
+            SetLabel(wordGrid[essais][i], &motPropose[i]);
+            if (etat[i] == 'x') {
+                SetBgColor(wordGrid[essais][i], GREEN);
+            } else if (etat[i] == 'o') {
+                SetBgColor(wordGrid[essais][i], YELLOW);
+            } else {
+                SetBgColor(wordGrid[essais][i], RED);
+            }
+        }
+        essais++;
+        if (gagne || essais >= MAX_ATTEMPTS) {
+            SetLabel(submitButton, "Game Over");
+            DisableWidget(submitButton);
+        }
+    } else {
+        printf("Invalid word\n");
+    }
+}
+
+void ResetCallback(Widget w, void *data) {
+    essais = 0;
+    motMystere = initMot();
+    printf("New word: %s\n", motMystere.mot); // For debugging purposes
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+        for (int j = 0; j < motMystere.size; j++) {
+            SetLabel(wordGrid[i][j], "");
+            SetBgColor(wordGrid[i][j], BLUE);
+        }
+    }
+    SetLabel(submitButton, "Submit");
+    EnableWidget(submitButton);
 }
