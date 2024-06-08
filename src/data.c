@@ -17,7 +17,7 @@ const char PATH[] =  "../ressources/DicoMotus"; //chemin vers le dictionnaire
  */
 int Gestion(void){
     int cLu;
-    dico = fopen("C:/Users/edvin/CLionProjects/ProjetMotus/DicoMotus", "r"); //on ouvre dico.txt en lecture seule
+    dico = fopen("/home/user/C/PROJET_MOTUS/DicoMotus", "r"); //on ouvre dico.txt en lecture seule
     //On test si le dictionnaire s'est bien ouvert
     if (dico == NULL){
         printf("Ouverture du dictionnaire impossible\n");
@@ -284,7 +284,18 @@ void Partie() {
     free(motMystere.mot);
 }
 
-int main(void) {
-    Partie();    // Démarrer le jeu
-    return 0;    // Retourner 0 si le programme se termine normalement
+int main (int argc, char *argv[]) {
+
+  if (OpenDisplay(argc,argv) ==0) {
+    fprintf(stderr, "Impossible d'ouvrir l'affichage\n");
+    return EXIT_FAILURE;
+  }
+
+  init_display(argc, argv);
+  
+  Partie();// Démarrer le jeu
+
+  MainLoop();
+  
+  return EXIT_SUCCESS;
 }
