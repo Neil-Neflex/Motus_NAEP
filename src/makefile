@@ -1,20 +1,18 @@
 CC = gcc
-CFLAGS = -Wall -I/usr/include/libsx
-LIBS = -lX11 -lXext -lXpm -lm -L/usr/lib/libsx
+CFLAGS = -Wall -Wextra
+LIBS = -lm -L/usr/X11R6/lib -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE
 
-all: motus
+SRC = data.c vue.c callback.c
+OBJ = $(SRC:.c=.o)
+EXEC = motus
 
-motus: main.o vue.o callback.o data.o
-	$(CC) -o motus main.o vue.o callback.o data.o $(LIBS)
+all: $(EXEC)
 
-main.o: main.c data.h vue.h
-	$(CC) $(CFLAGS) -c main.c
+$(EXEC): $(OBJ)
+    $(CC) $(OBJ) -o $(EXEC) $(LIBS)
 
-vue.o: vue.c vue.h callback.h
-	$(CC) $(CFLAGS) -c vue.c
+%.o: %.c
+    $(CC) -c $< -o $@ $(CFLAGS)
 
-callback.o: callback.c callback.h vue.h data.h
-	$(CC) $(CFLAGS) -c callback.c
-
-data.o: data.c data.h
-	$(CC) $(CFLAGS) -c data.c
+clean:
+    rm -f $(OBJ) $(EXEC)
