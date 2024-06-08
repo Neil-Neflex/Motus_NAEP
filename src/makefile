@@ -1,27 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -I$(HOME)/C/PROJET_MOTUS/libsx/include
-LDFLAGS = -L$(HOME)/C/PROJET_MOTUS/libsx/lib -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE -lm -lSX
+CFLAGS = -Wall -g
+LIBS = -lsx -lX11
 
-# Fichiers sources et objets
-SRC = data.c vue.c callback.c
-OBJ = $(SRC:.c=.o)
+SRCS = main.c
+OBJS = $(SRCS:.c=.o)
 
-# Nom de l'exécutable
-EXEC = newMotus
+TARGET = motus
 
-# Règle par défaut
-all: $(EXEC)
+all: $(TARGET)
 
-# Règle pour créer l'exécutable
-$(EXEC): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+$(TARGET): $(OBJS)
+    $(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
-# Règle pour compiler les fichiers .c en fichiers .o
-%.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
-
-# Règle pour nettoyer les fichiers générés
 clean:
-	rm -f $(OBJ) $(EXEC)
-
-.PHONY: clean
+    rm -f $(OBJS) $(TARGET)
