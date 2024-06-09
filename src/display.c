@@ -1,106 +1,58 @@
-#include "data.h"
+oid init_display(int argc, char *argv[])
+{
+    Widget test, restart, stop;
 
-// Global variables for UI components
-Widget inputField, submitButton, resetButton;
-Widget wordGrid[MAX_ATTEMPTS][MAX_WORD_LENGTH];
-Mot motMystere;
-int essais;
-char etat[MAX_WORD_LENGTH + 1];
-bool conditionAffichage;
+    //génération des bouttons utilisateur
+    test = MakeButton("Tester", test_callback, NULL);  //initialisation boutton tester
+    restart = MakeButton("Recommencer", restart_callback, NULL); //initialisation boutton recoomencer
+    stop = MakeButton("Arrêter", stop_callback, NULL); //initialisation boutton arrêter
 
-void InitDisplay(int argc, char **argv);
-void CreateDisplay();
-void SubmitCallback(Widget w, void *data);
-void ResetCallback(Widget w, void *data);
+    SetWidgetPos(stop, PLACE_RIGHT, NULL, PLACE_ABOVE, NULL); //positionnement bouton stop
+    SetWidgetPos(test, PLACE_LEFT, NULL, PLACE_ABOVE, NULL); //positionnement bouton test
+    SetWidgetPos(restart, PLACE_CENTER, NULL, PLACE_ABOVE, NULL); //positionnement bouton restart
 
-int main(int argc, char **argv) {
-    if (OpenDisplay(argc, argv) == 0) {
-        fprintf(stderr, "Can't open display\n");
-        return EXIT_FAILURE;
-    }
+    //génération de l'espace textuel
+    zone_text = MakeTextWidget(NULL, 20, 100, TRUE); // initialisation zone textuelle
+    SetWidgetPos(zone_text, PLACE_ABOVE, NULL, NO_CARE, NULL); //positionnement de la zone de text
 
-    InitDisplay(argc, argv);
-    MainLoop();
+}
+//Rôle : crée une box orange avec la lettre à l'intérieur 
+void box_orangeDef(char p*, char l,...){
+    Widget orange,label; //crée un widget nomé "nom"
+    orange = MakeColorBox(GetRGBColor(255, 0, 0), 100, 100);    // Red box
+    label = MakeLabel(l); //insertion de la lettre dans la case
 
-    return EXIT_SUCCESS;
+    //Positionnement des éléments créés
+    SetWidgetPos(orange, PLACE_UNDER, NULL, NO_CARE, NULL);
+    SetWidgetPos(label, PLACE_UNDER, orange, NO_CARE, NULL);
+
 }
 
-void InitDisplay(int argc, char **argv) {
-    motMystere = initMot();
-    essais = 0;
-    etat[motMystere.size] = '\0';
-    conditionAffichage = false;
+//Rôle : crée une box orange avec la lettre à l'intérieur 
+void box_bleuDef(char p*, char l,...){
+    Widget bleu,label; //crée un widget nomé "nom"
+    bleu = MakeColorBox(GetRGBColor(255, 0, 0), 100, 100);    // Red box
+    label = MakeLabel(l); //insertion de la lettre dans la case
 
-    printf("Mot à deviner : %s\n", motMystere.mot); // For debugging purposes
-
-    CreateDisplay();
+    //Positionnement des éléments créés
+    SetWidgetPos(bleu, PLACE_UNDER, NULL, NO_CARE, NULL);
+    SetWidgetPos(label, PLACE_UNDER, bleu, NO_CARE, NULL);
 }
 
-void CreateDisplay() {
-    SetBgColor(GetWidgetRoot(), WHITE);
-    
-    // Create input field
-    inputField = MakeStringEntry(NULL, MAX_WORD_LENGTH, NULL, NULL);
+//Rôle : crée une box orange avec la lettre à l'intérieur 
+void box_rougeDef(char p*, char l,...){
+    Widget rouge,label; //crée un widget nomé "nom"
+    rouge = MakeColorBox(GetRGBColor(255, 0, 0), 100, 100);    // Red box
+    label = MakeLabel(l); //insertion de la lettre dans la case
 
-    // Create buttons
-    submitButton = MakeButton("Submit", SubmitCallback, NULL);
-    resetButton = MakeButton("Reset", ResetCallback, NULL);
-
-    // Create grid for displaying the words
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-        for (int j = 0; j < MAX_WORD_LENGTH; j++) {
-            wordGrid[i][j] = MakeLabel("");
-            SetBgColor(wordGrid[i][j], BLUE);
-        }
-    }
-
-    // Layout the components
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-        for (int j = 0; j < motMystere.size; j++) {
-            AttachWidget(wordGrid[i][j], i, j);
-        }
-    }
-    AttachWidget(inputField, MAX_ATTEMPTS, 0);
-    AttachWidget(submitButton, MAX_ATTEMPTS + 1, 0);
-    AttachWidget(resetButton, MAX_ATTEMPTS + 1, 1);
+    //Positionnement des éléments créés
+    SetWidgetPos(rouge, PLACE_UNDER, NULL, NO_CARE, NULL);
+    SetWidgetPos(label, PLACE_UNDER, rouge, NO_CARE, NULL);
 }
 
-void SubmitCallback(Widget w, void *data) {
-    char motPropose[MAX_WORD_LENGTH + 1];
-    GetStringEntry(inputField, motPropose);
 
-    if (motExistant(motPropose) && longueurMot(motPropose, motMystere.mot)) {
-        int gagne = verifMot(motPropose, motMystere.mot, etat);
-        for (int i = 0; i < motMystere.size; i++) {
-            SetLabel(wordGrid[essais][i], &motPropose[i]);
-            if (etat[i] == 'x') {
-                SetBgColor(wordGrid[essais][i], GREEN);
-            } else if (etat[i] == 'o') {
-                SetBgColor(wordGrid[essais][i], YELLOW);
-            } else {
-                SetBgColor(wordGrid[essais][i], RED);
-            }
-        }
-        essais++;
-        if (gagne || essais >= MAX_ATTEMPTS) {
-            SetLabel(submitButton, "Game Over");
-            DisableWidget(submitButton);
-        }
-    } else {
-        printf("Invalid word\n");
-    }
-}
-
-void ResetCallback(Widget w, void *data) {
-    essais = 0;
-    motMystere = initMot();
-    printf("New word: %s\n", motMystere.mot); // For debugging purposes
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-        for (int j = 0; j < motMystere.size; j++) {
-            SetLabel(wordGrid[i][j], "");
-            SetBgColor(wordGrid[i][j], BLUE);
-        }
-    }
-    SetLabel(submitButton, "Submit");
-    EnableWidget(submitButton);
+void GenereBoxDisp(...){
+    //fait appels aux trois fonction de création de box 
+    //cette fonction prend en param le résultat du test du mot que l'utilisateur a entré ainsi qu'une position matricielle (1,1) ou (4,5)
+    //conseil : utiliser des switch 
 }
