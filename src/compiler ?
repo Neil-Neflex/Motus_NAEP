@@ -1,72 +1,13 @@
-motus.c: At top level:
-motus.c:75:6: error: conflicting types for ‘initialiser_jeu’
-   75 | void initialiser_jeu(SystemeJeu *systeme, const char *mot_secret) {
-      |      ^~~~~~~~~~~~~~~
-In file included from motus.c:1:
-motus.h:19:6: note: previous declaration of ‘initialiser_jeu’ was here
-   19 | void initialiser_jeu(SystemeJeu *systeme, char *mot_secret);
-      |      ^~~~~~~~~~~~~~~
-motus.c: In function ‘initialiser_jeu’:
-motus.c:84:12: error: ‘SystemeJeu’ {aka ‘struct <anonymous>’} has no member named ‘nb_essais’
-   84 |     systeme->nb_essais = 0;
-      |            ^~
-motus.c: In function ‘dessiner_retour’:
-motus.c:191:9: warning: implicit declaration of function ‘RemplirRectangle’; did you mean ‘XSetClipRectangles’? [-Wimplicit-function-declaration]
-  191 |         RemplirRectangle(j * taille_carreaux, indice_essai * (taille_carreaux + 10), taille_carreaux, taille_carreaux, couleur);
-      |         ^~~~~~~~~~~~~~~~
-      |         XSetClipRectangles
-motus.c:197:9: warning: implicit declaration of function ‘DessinerTexte’ [-Wimplicit-function-declaration]
-  197 |         DessinerTexte(lettre, position_x_texte, position_y_texte);
-      |         ^~~~~~~~~~~~~
-motus.c: In function ‘soumettre_tentative’:
-motus.c:262:9: warning: implicit declaration of function ‘AfficherPopup’ [-Wimplicit-function-declaration]
-  262 |         AfficherPopup("Bravo !!!");
-      |         ^~~~~~~~~~~~~
-motus.c: In function ‘initialiser_interface’:
-motus.c:299:5: warning: implicit declaration of function ‘OuvrirFenetre’ [-Wimplicit-function-declaration]
-  299 |     OuvrirFenetre();
-      |     ^~~~~~~~~~~~~
-motus.c:302:29: warning: implicit declaration of function ‘CreerBouton’ [-Wimplicit-function-declaration]
-  302 |     Widget bouton_quitter = CreerBouton("Quitter", action_terminer, NULL);
-      |                             ^~~~~~~~~~~
-motus.c:302:29: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-motus.c:303:26: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  303 |     Widget bouton_aide = CreerBouton("Aide", aide_action, (void *)systeme); // Associer la fonction de rappel Aide
-      |                          ^~~~~~~~~~~
-motus.c:304:26: warning: implicit declaration of function ‘CreerZoneTexte’ [-Wimplicit-function-declaration]
-  304 |     Widget zone_saisie = CreerZoneTexte(NULL, 200, soumettre_tentative, (void *)systeme);
-      |                          ^~~~~~~~~~~~~~
-motus.c:304:26: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-motus.c:305:35: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  305 |     Widget bouton_reinitialiser = CreerBouton("Réinitialiser", reinitialiser_jeu, (void *)systeme); // Associer la fonction de rappel Réinitialiser
-      |                                   ^~~~~~~~~~~
-motus.c:306:28: warning: implicit declaration of function ‘CreerZoneDessin’ [-Wimplicit-function-declaration]
-  306 |     systeme->zone_dessin = CreerZoneDessin(400, 400, redimensionner_action, (void *)systeme); // Ajouter une fonction de rappel de redimensionnement
-      |                            ^~~~~~~~~~~~~~~
-motus.c:306:26: warning: assignment to ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  306 |     systeme->zone_dessin = CreerZoneDessin(400, 400, redimensionner_action, (void *)systeme); // Ajouter une fonction de rappel de redimensionnement
-      |                          ^
-motus.c:307:31: warning: implicit declaration of function ‘CreerWidgetTexte’ [-Wimplicit-function-declaration]
-  307 |     systeme->message_erreur = CreerWidgetTexte("", 400, 30, FALSE, FALSE); // Initialisation du widget pour les messages d'erreur
-      |                               ^~~~~~~~~~~~~~~~
-motus.c:307:29: warning: assignment to ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  307 |     systeme->message_erreur = CreerWidgetTexte("", 400, 30, FALSE, FALSE); // Initialisation du widget pour les messages d'erreur
-      |                             ^
-motus.c:310:5: warning: implicit declaration of function ‘PositionnerWidget’ [-Wimplicit-function-declaration]
-  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
-      |     ^~~~~~~~~~~~~~~~~
-motus.c:310:39: error: ‘DROITE’ undeclared (first use in this function)
-  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
-      |                                       ^~~~~~
-motus.c:310:39: note: each undeclared identifier is reported only once for each function it appears in
-motus.c:310:60: error: ‘AUCUN’ undeclared (first use in this function)
-  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
-      |                                                            ^~~~~
-motus.c:313:45: error: ‘SOUS’ undeclared (first use in this function)
-  313 |     PositionnerWidget(systeme->zone_dessin, SOUS, zone_saisie, AUCUN, NULL);
-      |                                             ^~~~
-motus.c:317:5: warning: implicit declaration of function ‘AfficherFenetre’ [-Wimplicit-function-declaration]
-  317 |     AfficherFenetre();
-      |     ^~~~~~~~~~~~~~~
+    Widget bouton_quitter = CreerBouton("Quitter", action_terminer, NULL);
+    Widget bouton_aide = CreerBouton("Aide", aide_action, (void *)systeme); // Associer la fonction de rappel Aide
+    Widget zone_saisie = CreerZoneTexte(NULL, 200, soumettre_tentative, (void *)systeme);
+    Widget bouton_reinitialiser = CreerBouton("Réinitialiser", reinitialiser_jeu, (void *)systeme); // Associer la fonction de rappel Réinitialiser
+    systeme->zone_dessin = CreerZoneDessin(400, 400, redimensionner_action, (void *)systeme); // Ajouter une fonction de rappel de redimensionnement
+    systeme->message_erreur = CreerWidgetTexte("", 400, 30, FALSE, FALSE); // Initialisation du widget pour les messages d'erreur
 
-Compilation exited abnormally with code 1 at Sun Jun  9 22:22:54
+    // Positionner les widgets
+    PositionnerWidget(bouton_quitter, PLACE_RIGHT, zone_saisie, NO_CARE, NULL);      // Positionnement du bouton Quitter
+    PositionnerWidget(bouton_aide, PLACE_RIGHT, bouton_quitter, NO_CARE, NULL);      // Positionnement du bouton Aide
+    PositionnerWidget(bouton_reinitialiser, PLACE_RIGHT, bouton_aide, NO_CARE, NULL); // Positionnement du bouton Réinitialiser
+    PositionnerWidget(systeme->zone_dessin, PLACE_UNDER, zone_saisie, NO_CARE, NULL);
+    PositionnerWidget(systeme->message_erreur, PLACE_UNDER, systeme->zone_dessin, NO_CARE, NULL);
