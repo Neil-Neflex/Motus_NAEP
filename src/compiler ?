@@ -1,1 +1,96 @@
-gcc -o motus motus.o main.o dico.o mot.o vue.o callback.o -lm -L/usr/X11R6/lib -lX11 -lXaw -lXmu -lXt -lXext -lXpm -lSM -lICE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "libsx.h"
+
+#define WORD_LENGTH 8
+#define MAX_ATTEMPTS 6
+
+const char* target_word = "cloturer"; // Mot cible à deviner
+char attempts[MAX_ATTEMPTS][WORD_LENGTH+1]; // Historique des tentatives
+
+void draw_grid();
+void enter_word(Widget w, char *word);
+
+int main(int argc, char *argv[])
+{
+    if (OpenDisplay(argc, argv) == 0) {
+        fprintf(stderr, "Cannot open display\n");
+        return 1;
+    }
+
+    Widget quit_btn = MakeButton("Quit", Quit);
+    Widget enter_field = MakeStringEntry(NULL, enter_word, 20);
+
+    SetWidgetPos(enter_field, PLACE_RIGHT, quit_btn, NO_CARE, NULL);
+
+    ShowDisplay();
+    MainLoop();
+
+    return 0;
+}
+
+void draw_grid() {
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+        for (int j = 0; j < WORD_LENGTH; j++) {
+            // Logique de dessin des cercles en fonction de la correspondance
+        }
+    }
+}
+
+void enter_word(Widget w, char *word) {
+    static int attempt_count = 0;
+    if (attempt_count >= MAX_ATTEMPTS) {
+        fprintf(stderr, "Max attempts reached\n");
+        return;
+    }
+    
+    // Copie du mot entré dans le tableau des tentatives
+    strncpy(attempts[attempt_count], word, WORD_LENGTH);
+    attempts[attempt_count][WORD_LENGTH] = '\0';
+
+    attempt_count++;
+
+    draw_grid();
+}
+
+void Quit(Widget w, void *data) {
+    exit(0);
+}
+
+void draw_circle(int x, int y, char color) {
+    // Utiliser les fonctions de dessin de libsx pour dessiner les cercles
+    if (color == 'R') {
+        SetColor(RED);
+    } else if (color == 'Y') {
+        SetColor(YELLOW);
+    } else {
+        SetColor(BLUE); // Couleur par défaut
+    }
+
+    DrawFilledArc(x, y, 20, 20, 0, 360*64);
+}
+
+void draw_grid() {
+    int x = 50, y = 50; // Position de départ
+
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+        for (int j = 0; j < WORD_LENGTH; j++) {
+            if (i >= attempt_count) return; // Ne dessine que les tentatives effectuées
+            
+            char entered_char = attempts[i][j];
+            char target_char = target_word[j];
+            
+            if (entered_char == target_char) {
+                draw_circle(x, y, 'R');
+            } else if (strchr(target_word, entered_char) != NULL) {
+                draw_circle(x, y, 'Y');
+            } else {
+                draw_circle(x, y, 'B');
+            }
+            x += 30; // Espacement horizontal
+        }
+        x = 50; // Réinitialiser la position horizontale
+        y += 30; // Espacement vertical
+    }
+}
