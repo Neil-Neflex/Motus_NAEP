@@ -1,96 +1,72 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "libsx.h"
+motus.c: At top level:
+motus.c:75:6: error: conflicting types for ‘initialiser_jeu’
+   75 | void initialiser_jeu(SystemeJeu *systeme, const char *mot_secret) {
+      |      ^~~~~~~~~~~~~~~
+In file included from motus.c:1:
+motus.h:19:6: note: previous declaration of ‘initialiser_jeu’ was here
+   19 | void initialiser_jeu(SystemeJeu *systeme, char *mot_secret);
+      |      ^~~~~~~~~~~~~~~
+motus.c: In function ‘initialiser_jeu’:
+motus.c:84:12: error: ‘SystemeJeu’ {aka ‘struct <anonymous>’} has no member named ‘nb_essais’
+   84 |     systeme->nb_essais = 0;
+      |            ^~
+motus.c: In function ‘dessiner_retour’:
+motus.c:191:9: warning: implicit declaration of function ‘RemplirRectangle’; did you mean ‘XSetClipRectangles’? [-Wimplicit-function-declaration]
+  191 |         RemplirRectangle(j * taille_carreaux, indice_essai * (taille_carreaux + 10), taille_carreaux, taille_carreaux, couleur);
+      |         ^~~~~~~~~~~~~~~~
+      |         XSetClipRectangles
+motus.c:197:9: warning: implicit declaration of function ‘DessinerTexte’ [-Wimplicit-function-declaration]
+  197 |         DessinerTexte(lettre, position_x_texte, position_y_texte);
+      |         ^~~~~~~~~~~~~
+motus.c: In function ‘soumettre_tentative’:
+motus.c:262:9: warning: implicit declaration of function ‘AfficherPopup’ [-Wimplicit-function-declaration]
+  262 |         AfficherPopup("Bravo !!!");
+      |         ^~~~~~~~~~~~~
+motus.c: In function ‘initialiser_interface’:
+motus.c:299:5: warning: implicit declaration of function ‘OuvrirFenetre’ [-Wimplicit-function-declaration]
+  299 |     OuvrirFenetre();
+      |     ^~~~~~~~~~~~~
+motus.c:302:29: warning: implicit declaration of function ‘CreerBouton’ [-Wimplicit-function-declaration]
+  302 |     Widget bouton_quitter = CreerBouton("Quitter", action_terminer, NULL);
+      |                             ^~~~~~~~~~~
+motus.c:302:29: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+motus.c:303:26: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  303 |     Widget bouton_aide = CreerBouton("Aide", aide_action, (void *)systeme); // Associer la fonction de rappel Aide
+      |                          ^~~~~~~~~~~
+motus.c:304:26: warning: implicit declaration of function ‘CreerZoneTexte’ [-Wimplicit-function-declaration]
+  304 |     Widget zone_saisie = CreerZoneTexte(NULL, 200, soumettre_tentative, (void *)systeme);
+      |                          ^~~~~~~~~~~~~~
+motus.c:304:26: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+motus.c:305:35: warning: initialization of ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  305 |     Widget bouton_reinitialiser = CreerBouton("Réinitialiser", reinitialiser_jeu, (void *)systeme); // Associer la fonction de rappel Réinitialiser
+      |                                   ^~~~~~~~~~~
+motus.c:306:28: warning: implicit declaration of function ‘CreerZoneDessin’ [-Wimplicit-function-declaration]
+  306 |     systeme->zone_dessin = CreerZoneDessin(400, 400, redimensionner_action, (void *)systeme); // Ajouter une fonction de rappel de redimensionnement
+      |                            ^~~~~~~~~~~~~~~
+motus.c:306:26: warning: assignment to ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  306 |     systeme->zone_dessin = CreerZoneDessin(400, 400, redimensionner_action, (void *)systeme); // Ajouter une fonction de rappel de redimensionnement
+      |                          ^
+motus.c:307:31: warning: implicit declaration of function ‘CreerWidgetTexte’ [-Wimplicit-function-declaration]
+  307 |     systeme->message_erreur = CreerWidgetTexte("", 400, 30, FALSE, FALSE); // Initialisation du widget pour les messages d'erreur
+      |                               ^~~~~~~~~~~~~~~~
+motus.c:307:29: warning: assignment to ‘Widget’ {aka ‘struct _WidgetRec *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  307 |     systeme->message_erreur = CreerWidgetTexte("", 400, 30, FALSE, FALSE); // Initialisation du widget pour les messages d'erreur
+      |                             ^
+motus.c:310:5: warning: implicit declaration of function ‘PositionnerWidget’ [-Wimplicit-function-declaration]
+  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
+      |     ^~~~~~~~~~~~~~~~~
+motus.c:310:39: error: ‘DROITE’ undeclared (first use in this function)
+  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
+      |                                       ^~~~~~
+motus.c:310:39: note: each undeclared identifier is reported only once for each function it appears in
+motus.c:310:60: error: ‘AUCUN’ undeclared (first use in this function)
+  310 |     PositionnerWidget(bouton_quitter, DROITE, zone_saisie, AUCUN, NULL);      // Positionnement du bouton Quitter
+      |                                                            ^~~~~
+motus.c:313:45: error: ‘SOUS’ undeclared (first use in this function)
+  313 |     PositionnerWidget(systeme->zone_dessin, SOUS, zone_saisie, AUCUN, NULL);
+      |                                             ^~~~
+motus.c:317:5: warning: implicit declaration of function ‘AfficherFenetre’ [-Wimplicit-function-declaration]
+  317 |     AfficherFenetre();
+      |     ^~~~~~~~~~~~~~~
 
-#define WORD_LENGTH 8
-#define MAX_ATTEMPTS 6
-
-const char* target_word = "cloturer"; // Mot cible à deviner
-char attempts[MAX_ATTEMPTS][WORD_LENGTH+1]; // Historique des tentatives
-
-void draw_grid();
-void enter_word(Widget w, char *word);
-
-int main(int argc, char *argv[])
-{
-    if (OpenDisplay(argc, argv) == 0) {
-        fprintf(stderr, "Cannot open display\n");
-        return 1;
-    }
-
-    Widget quit_btn = MakeButton("Quit", Quit);
-    Widget enter_field = MakeStringEntry(NULL, enter_word, 20);
-
-    SetWidgetPos(enter_field, PLACE_RIGHT, quit_btn, NO_CARE, NULL);
-
-    ShowDisplay();
-    MainLoop();
-
-    return 0;
-}
-
-void draw_grid() {
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-        for (int j = 0; j < WORD_LENGTH; j++) {
-            // Logique de dessin des cercles en fonction de la correspondance
-        }
-    }
-}
-
-void enter_word(Widget w, char *word) {
-    static int attempt_count = 0;
-    if (attempt_count >= MAX_ATTEMPTS) {
-        fprintf(stderr, "Max attempts reached\n");
-        return;
-    }
-    
-    // Copie du mot entré dans le tableau des tentatives
-    strncpy(attempts[attempt_count], word, WORD_LENGTH);
-    attempts[attempt_count][WORD_LENGTH] = '\0';
-
-    attempt_count++;
-
-    draw_grid();
-}
-
-void Quit(Widget w, void *data) {
-    exit(0);
-}
-
-void draw_circle(int x, int y, char color) {
-    // Utiliser les fonctions de dessin de libsx pour dessiner les cercles
-    if (color == 'R') {
-        SetColor(RED);
-    } else if (color == 'Y') {
-        SetColor(YELLOW);
-    } else {
-        SetColor(BLUE); // Couleur par défaut
-    }
-
-    DrawFilledArc(x, y, 20, 20, 0, 360*64);
-}
-
-void draw_grid() {
-    int x = 50, y = 50; // Position de départ
-
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-        for (int j = 0; j < WORD_LENGTH; j++) {
-            if (i >= attempt_count) return; // Ne dessine que les tentatives effectuées
-            
-            char entered_char = attempts[i][j];
-            char target_char = target_word[j];
-            
-            if (entered_char == target_char) {
-                draw_circle(x, y, 'R');
-            } else if (strchr(target_word, entered_char) != NULL) {
-                draw_circle(x, y, 'Y');
-            } else {
-                draw_circle(x, y, 'B');
-            }
-            x += 30; // Espacement horizontal
-        }
-        x = 50; // Réinitialiser la position horizontale
-        y += 30; // Espacement vertical
-    }
-}
+Compilation exited abnormally with code 1 at Sun Jun  9 22:22:54
