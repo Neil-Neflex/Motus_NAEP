@@ -7,7 +7,7 @@
 
 FILE* dico = NULL; //Ce pointeur de fichier contiendra notre dictionnaire
 int NBMOTS = 0;
-const char PATH[] =  "../ressources/DicoMotus"; //chemin vers le dictionnaire
+const char PATH[] =  "DicoMotus"; //chemin vers le dictionnaire
 
 
 /**
@@ -17,7 +17,7 @@ const char PATH[] =  "../ressources/DicoMotus"; //chemin vers le dictionnaire
  */
 int Gestion(void){
     int cLu;
-    dico = fopen("/home/user/C/PROJET_MOTUS/DicoMotus", "r"); //on ouvre dico.txt en lecture seule
+    dico = fopen("DicoMotus", "r"); //on ouvre dico.txt en lecture seule
     //On test si le dictionnaire s'est bien ouvert
     if (dico == NULL){
         printf("Ouverture du dictionnaire impossible\n");
