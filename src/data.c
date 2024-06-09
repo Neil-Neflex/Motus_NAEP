@@ -290,12 +290,7 @@ int main (int argc, char *argv[]) {
     fprintf(stderr, "Impossible d'ouvrir l'affichage\n");
     return EXIT_FAILURE;
   }
-
-  init_display(argc, argv);
-  
   Partie();// Démarrer le jeu
-
-  MainLoop();
-  
+    
   return EXIT_SUCCESS;
 }
